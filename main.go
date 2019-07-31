@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -30,10 +29,11 @@ type (
 
 	//CommandEndpoint a known Sia API endpoint. Describes how the endpoint should be accessed, any help text and any parameters that are required
 	CommandEndpoint struct {
-		Path     string
-		Method   string
-		HelpText string
-		Params   []CommandParam
+		Path               string
+		AlternativeMatches []string
+		Method             string
+		HelpText           string
+		Params             []CommandParam
 	}
 
 	//Command the command parsed from the input
@@ -156,6 +156,9 @@ var SiaAPIEndpoints = []CommandEndpoint{
 	CommandEndpoint{
 		Path:   "/host/storage",
 		Method: "GET",
+		AlternativeMatches: []string{
+			"/host/folders",
+		},
 	},
 	CommandEndpoint{
 		Path:   "/host/storage/folders/add",
@@ -578,14 +581,14 @@ func parseInputs(args []string) (apiCommand Command) {
 			continue
 		}
 
-		apiCommand.RequestPath += fmt.Sprintf("/%s", arg)
+		apiCommand.RequestPath += "/" + arg
 	}
 
 	return
 }
 
 func makeRequest(cmd Command, body io.Reader) (req *http.Request, err error) {
-	urlStr := fmt.Sprintf("http://%s%s", cmd.APIAddress, cmd.RequestPath)
+	urlStr := "http://" + cmd.APIAddress + cmd.RequestPath
 
 	if err != nil {
 		return
