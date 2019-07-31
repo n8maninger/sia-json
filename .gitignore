@@ -1,0 +1,5 @@
+config.json
+*.pem
+dist/
+*.log
+.DS_Store
