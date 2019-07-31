@@ -497,10 +497,6 @@ func matchPaths(path, template string) bool {
 		return false
 	}
 
-	if strings.HasPrefix(segments[len(segments)-1], "*") {
-
-	}
-
 	for i, pathSeg := range pathSegments {
 		if len(segments) <= i {
 			return false
@@ -565,7 +561,7 @@ func parseInputs(args []string) (apiCommand Command) {
 			}
 
 			if key == "method" {
-				apiCommand.Method = value
+				apiCommand.Method = strings.ToUpper(value)
 				continue
 			} else if key == "addr" {
 				apiCommand.APIAddress = value
@@ -610,7 +606,7 @@ func makeRequest(cmd Command, body io.Reader) (req *http.Request, err error) {
 	req.SetBasicAuth("", cmd.APIPassword)
 	req.Header.Add("User-Agent", cmd.UserAgent)
 
-	if cmd.Method == "Post" {
+	if cmd.Method == "POST" {
 		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	}
 
